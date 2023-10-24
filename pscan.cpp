@@ -8,13 +8,13 @@ void count_open_ports(int start, int end){
     struct sockaddr_in tower;
 
     //localhost is 127.0.0.1 (hopefully)
-    if (inet_pton(AF_INET, "127.0.0.1", &tower.sin_addr) < 1){
+    /* if (inet_pton(AF_INET, "127.0.0.1", &tower.sin_addr) < 1){
         fprintf(stderr, "Problem loading your IP address\n");
         exit(EXIT_FAILURE);
-    }
+    } */
     memset(&tower, 0, sizeof(tower));
     tower.sin_family = AF_INET;
-    tower.sin_addr.s_addr = inet_addr("192.168.1.1");
+    tower.sin_addr.s_addr = inet_addr(ipAddress);
 
     for (int port_num = start; port_num <= end; port_num++){
         tower.sin_port = htons(port_num);
@@ -54,13 +54,14 @@ void print_ports(vector<int>& open_ports, int start, int end, char flag){
         	break;
 
         default:
+            cout << "\033[1;34m===== Open Ports =====\033[0m\n";
             for (int i : open_ports){
                 cout << "\033[1m" << i << "\033[0m\n";
             }
 	}   
 }
 
-void thread_handler(int start, int end, char flag){
+void thread_handler(const char * ipAddress, int start, int end, char flag){
     int max_threads = thread::hardware_concurrency();
     thread thread_list[max_threads];
     int interval_size = (end - start + 1)/max_threads;

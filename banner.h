@@ -7,6 +7,7 @@
 // Initialize libcurl
 CURL* curl = curl_easy_init();
 
-
+//get the banner 
+//static void getBanner();
 
 #endif

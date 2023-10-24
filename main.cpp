@@ -1,5 +1,5 @@
 #include "pscan.cpp"
-#include <iostream>
+#include "banner.cpp"
 
 //Print help to the console
 void help(){
@@ -30,21 +30,25 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
+    //Prompting for Ip address input
     if (strcmp(argv[2], "") == 0){
         printf("Please provide Ip address.\n");
         help();
         return 1;
     }
 
+    //Printing help when to many arguments provided
     if (argc > 3){
         printf("Too many arguments use help for more information.\n");
         help();
         return 1;
     } 
 
-    //startPort main loop
+    //Start main loop
     int opt, startPort, endPort;
-    string ipAddress = argv[2];
+    //ip address variable
+    ipAddress = argv[2];
+    //printf(ipAddress);//debug
     while((opt = getopt(argc, argv, "vqsupah")) != -1){
         switch (opt){
             case 'v':
@@ -53,27 +57,28 @@ int main(int argc, char* argv[]){
             case 'q':
                 startPort = 440;
                 endPort = 450;
-                thread_handler(startPort, endPort, (char) opt);
+                thread_handler(ipAddress, startPort, endPort, (char) opt);
+                getBanner(ipAddress);
                 break;    
             case 's':
                 startPort = 0;
                 endPort = 1023;
-                thread_handler(startPort, endPort, (char) opt);
+                thread_handler(ipAddress, startPort, endPort, (char) opt);
                 break;
             case 'u':
                 startPort = 1024;
                 endPort = 49151;
-                thread_handler(startPort, endPort, (char) opt);
+                thread_handler(ipAddress, startPort, endPort, (char) opt);
                 break;
             case 'p':
                 startPort = 49152;
                 endPort = 65535;
-                thread_handler(startPort, endPort, (char) opt);
+                thread_handler(ipAddress, startPort, endPort, (char) opt);
                 break;
             case 'a':
                 startPort = 0;
                 endPort = 65535;
-                thread_handler(startPort, endPort, (char) opt);
+                thread_handler(ipAddress, startPort, endPort, (char) opt);
                 break;
             case 'h':
                 help();

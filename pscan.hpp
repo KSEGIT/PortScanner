@@ -22,6 +22,9 @@ using std::mutex;
 using std::lock_guard;
 using std::vector;
 
+//global ip address variable
+const char * ipAddress;
+
 struct port_args {
     int start;
     int end;
