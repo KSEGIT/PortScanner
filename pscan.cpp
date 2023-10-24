@@ -34,7 +34,7 @@ void count_open_ports(int start, int end){
 }
 
 void verbose_printer(char flag){
-    std::cout << "";
+    cout << "\n-verbose print debug\n\n";//debug
     return;
 }
 
