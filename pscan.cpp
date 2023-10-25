@@ -26,7 +26,7 @@ void count_open_ports(int start, int end){
         }
         if (connect(sockfd, (struct sockaddr*) &tower, sizeof(tower)) == 0){
             //cout << std::setw(11);//debug
-            lock_guard<mutex> guard(vec_mtx);
+            lock_guard<std::mutex> guard(vec_mtx);
             open_ports.push_back(port_num);
         }
         close(sockfd);
@@ -38,26 +38,27 @@ void verbose_printer(char flag){
     return;
 }
 
-void print_ports(vector<int>& open_ports, int start, int end, char flag){
+void print_ports(std::vector<int>& open_ports, int start, int end, char flag){
 	switch(flag){
         case 's':
-            cout << "\033[1;34m===== Open System Ports =====\033[0m\n";
-            for (int i : open_ports){
-                cout << "\033[1m" << i << "\033[0m";
-                if (port_map.find(i) != port_map.end()){
-                    cout << " -> " << port_map[i] << "\n";   
+            std::cout << "\033[1;34m===== Open System Ports =====\033[0m\n";
+            for (auto&& item : open_ports){
+                std::cout << "\033[1m" << item << "\033[0m";
+                if (port_map.find(item) != port_map.end()){
+                    std::cout << " -> " << port_map[item] << "\n";   
                 }
                 else{
-                    cout << "\n";
+                    std::cout << "\n";
                 }
 			}
         	break;
 
         default:
-            cout << "\033[1;34m===== Open Ports =====\033[0m\n";
+            std::cout << "\033[1;34m===== Open Ports =====\033[0m\n";
             for (int i : open_ports){
-                cout << "\033[1m" << i << "\033[0m\n";
+            std::cout << "\033[1m" << i << "\033[0m\n";
             }
+            std::cout << "\033[1;34m===== Open Ports =====\033[0m\n";
 	}   
 }
 

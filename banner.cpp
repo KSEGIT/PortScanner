@@ -1,28 +1,49 @@
-#include "banner.h"
+//Based on https://curl.se/libcurl/c/sepheaders.html
 
-// Callback function to write received data into a string
+#include "banner.hpp"
+
+// Callback function to write received body data into a string
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
     size_t totalSize = size * nmemb;
     output->append(static_cast<char*>(contents), totalSize);
     return totalSize;
 }
 
+// Callback function to capture full response headers into a string
+size_t WriteHeaderCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+    size_t totalSize = size * nmemb;
+    std::string* response = static_cast<std::string*>(userp);
+    response->append(static_cast<char*>(contents), totalSize);
+    return totalSize;
+}
+
 static void getBanner(const char * ipAddress) {
     if (curl) {
-        // Specify the URL (IP address or domain name)
-        const char* url = ipAddress;  // Replace with the server you want to inspect
+        // Set the address to be fetched
+        curl_easy_setopt(curl, CURLOPT_URL, ipAddress);
 
-        // Set the URL to be fetched
-        curl_easy_setopt(curl, CURLOPT_URL, url);
+        // Limitin response only to headers
+        //curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "HEAD");
 
-        // Create a string to store the received data
-        std::string response_data;
+        // Turn on Follow redirects
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
+        // Set a function to suppress the body of the response
+        //curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);
+
+        // Strings to store the received data
+        std::string headerData;
+        std::string bodyData;
+        
         // Set the callback function to process received data
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &bodyData);
+        
+        /* we want the headers be written to this file handle */
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteHeaderCallback);
+        curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headerData);
 
-        // Configure libcurl to use OpenSSL
+        // Configure libcurl to use SSL
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
@@ -32,13 +53,16 @@ static void getBanner(const char * ipAddress) {
         if (res != CURLE_OK) {
             std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
         } else {
-            // Print the banner response
-            std::cout << "Banner response:\n" << response_data << std::endl;
+            // Print the curl responses
+            std::cout << "\033[1;34m===== Host Response =====\033[0m\n";
+            std::cout << "Header response:\n" << headerData << std::endl;
+            //std::cout << "Body response:\n" << bodyData << std::endl;
 
+            std::cout << "\033[1;34m===== TLS/SSL =====\033[0m\n";
             // Check if TLS/SSL is used
             long http_code = 0;
             curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
-
+            std::cout << "HTTP Status Code: " << http_code << std::endl;
             if (http_code == 200) {
                 std::cout << "TLS/SSL is used.\n";
                 const char* tls_version;
@@ -56,4 +80,3 @@ static void getBanner(const char * ipAddress) {
     }
 
 };
-
