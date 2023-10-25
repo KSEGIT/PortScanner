@@ -1,5 +1,4 @@
 
-
 #include "portscan.hpp"
 
 void count_openPorts(int start, int end){
@@ -35,6 +34,12 @@ void verbose_printer(char flag){
 
 //Printing open ports
 void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
+    for (int port : openPorts) {
+        if (port == 80 || 443 || 445) {
+            //startBanner();
+            //getBanner(ipAddress);
+        }
+    }
 	// Diffrent printing can be used depending on provided flag
     switch(flag){
         case 's':
@@ -42,7 +47,7 @@ void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
             for (auto&& item : openPorts){
             std::cout << "\033[1m" << item << "\033[0m\n";
             }
-            std::cout << "\033[1;34m===== End Open System Ports =====\033[0m\n";
+            std::cout << "\033[1;34m===== End Open System Ports =====\033[0m\n\n\n";
         	break;
 
         default:
@@ -50,12 +55,13 @@ void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
             for (auto&& item : openPorts){
             std::cout << "\033[1m" << item << "\033[0m\n";
             }
-            std::cout << "\033[1;34m===== End Open Ports =====\033[0m\n";
+            std::cout << "\033[1;34m===== End Open Ports =====\033[0m\n\n\n";
 	}   
 }
 
 //Multithreading handler
 void thread_handler(const char * ipAddress, int start, int end, char flag){
+
     //Threads configuration
     int max_threads = thread::hardware_concurrency();
     thread thread_list[max_threads];
@@ -68,6 +74,7 @@ void thread_handler(const char * ipAddress, int start, int end, char flag){
         thread_list[thread_num] = thread(count_openPorts, start, right_bound);
         start = right_bound + 1;
     }
+
     //round up all the threads
     for (thread_num = 0; thread_num < max_threads; thread_num++){
         thread_list[thread_num].join();
@@ -79,16 +86,8 @@ void thread_handler(const char * ipAddress, int start, int end, char flag){
     //Printing open ports to console
 	print_ports(openPorts, start, end, flag);
 
-    for (int port : openPorts) {
-        if (port == 80 || 443 || 445) {
-            //startBanner();
-            //getBanner(ipAddress);
-        }
-    }
-
     //TODO: Add verbose data
     if (verbose){
         verbose_printer(flag);
     }
-    
 }

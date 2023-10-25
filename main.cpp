@@ -27,10 +27,10 @@ void help(){
     "  '-h' - Display this help message\n"
     );
 }
-
+/* 
 void startBanner() {
     getBanner(ipAddress);
-}
+} */
 
 int main(int argc, char* argv[]){
 
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]){
     int opt, startPort, endPort;
     //Definition of global IP address variable
     ipAddress = argv[2];
-
+    
     //Start main loop
     while((opt = getopt(argc, argv, "vqsupah")) != -1){
         switch (opt){
@@ -76,7 +76,7 @@ int main(int argc, char* argv[]){
                 startPort = 440;
                 endPort = 450;
                 thread_handler(ipAddress, startPort, endPort, (char) opt);
-                getBanner(ipAddress);
+                //getBanner(ipAddress);
                 break;    
             case 's':
                 startPort = 0;

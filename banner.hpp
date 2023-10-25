@@ -13,10 +13,10 @@ using namespace std;
 // Initialize libcurl
 CURL* curl = curl_easy_init();
 
-//get the host response
+// Startting cURL to get banner and certyficates
 void getBanner(const char * ipAddress);
 
-//gettint verbose flag from main
+// Verbose flag from main
 extern bool verbose;
 
 #endif

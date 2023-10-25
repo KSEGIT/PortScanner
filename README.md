@@ -1,2 +1,2 @@
 # PortScanner
-Port scanner with banner and tis/ssl verification
+Port scanner with banner and tls/ssl verification

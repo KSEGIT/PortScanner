@@ -1,4 +1,5 @@
-//Based on https://curl.se/libcurl/c/sepheaders.html
+// Based on https://curl.se/libcurl/c/sepheaders.html
+// For more information see: https://curl.se/libcurl/c/libcurl-easy.html
 
 #include "banner.hpp"
 
@@ -51,7 +52,7 @@ void getBanner(const char * ipAddress) {
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteHeaderCallback);
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headerData);
 
-        // Configure libcurl to use SSL
+        // Configure libcurl to verify
         //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
@@ -76,19 +77,17 @@ void getBanner(const char * ipAddress) {
                 const char* tls_version;
                 curl_easy_getinfo(curl, CURLINFO_TLS_SSL_PTR, &tls_version);
                 std::cout << "TLS/SSL Version: " << tls_version << "\n";
-
-                    // Extract certificate details
-                    struct curl_certinfo *certinfo;
-                    curl_easy_getinfo(curl, CURLINFO_CERTINFO, &certinfo);
-                    cout << "TLS/SSL Details: " << certinfo << "\n\n";
-                    // Iterate through certificate chain and print details
-                    for (int i = 0; i < certinfo->num_of_certs; i++) {
-                        cout << "Certificate #" << i + 1 << " details:" << endl;
-                        for (struct curl_slist* slist = certinfo->certinfo[i]; slist; slist = slist->next) {
-                            cout << slist->data << endl;
-
-                        }
+                // Extract certificate details
+                struct curl_certinfo *certinfo;
+                curl_easy_getinfo(curl, CURLINFO_CERTINFO, &certinfo);
+                cout << "TLS/SSL Details: " << certinfo << "\n\n";
+                // Iterate through certificate chain and print details
+                for (int i = 0; i < certinfo->num_of_certs; i++) {
+                    cout << "Certificate #" << i + 1 << " details:" << endl;
+                    for (struct curl_slist* slist = certinfo->certinfo[i]; slist; slist = slist->next) {
+                        cout << slist->data << endl;
                     }
+                }
 
             } else {
                 std::cout << "TLS/SSL is not used for this connection.\n";

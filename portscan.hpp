@@ -22,7 +22,7 @@ extern const char * ipAddress;
 extern bool verbose;
 
 //extern void getBanner(const char * ipAddress);
-extern void startBanner();
+//extern void startBanner();
 
 //Datastructure for port arguments
 struct port_args {
