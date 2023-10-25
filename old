@@ -1,0 +1,135 @@
+#ifndef BANNER_HPP
+#define BANNER_HPP
+
+#include <iostream>
+#include <string>
+#include <curl/curl.h>
+#include <cerrno>       
+#include <cstring>      
+#include <cstdlib>
+
+using namespace std;
+
+// Initialize libcurl
+CURL* curl = curl_easy_init();
+
+//get the host response
+static void getBanner(const char * ipAddress);
+
+//gettint verbose flag from main
+extern bool verbose;
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
+//Based on https://curl.se/libcurl/c/sepheaders.html
+
+#include "banner.hpp"
+
+// Callback function to write received body data into a string
+size_t WriteCallback(void* contents, size_t size, size_t nmemb, string* output) {
+    size_t totalSize = size * nmemb;
+    output->append(static_cast<char*>(contents), totalSize);
+    return totalSize;
+}
+
+// Callback function to capture full response headers into a string
+size_t WriteHeaderCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+    size_t totalSize = size * nmemb;
+    string* response = static_cast<string*>(userp);
+    response->append(static_cast<char*>(contents), totalSize);
+    return totalSize;
+}
+
+static void getBanner(const char * ipAddress) {
+    if (curl) {
+
+        // ########### cURL Settings ###########
+        // Set the address to be fetched
+        curl_easy_setopt(curl, CURLOPT_URL, ipAddress);
+
+        // Limitin response only to headers
+        //curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "HEAD");
+
+        // Turn on Follow redirects
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+        // Set a function to suppress the body of the response
+        //curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);
+        
+        if (verbose){
+        // Enable VERBOSE mode to see detailed SSL/TLS info
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        }
+        
+        // Set the CERTINFO option to get certificate details
+        curl_easy_setopt(curl, CURLOPT_CERTINFO, 1L);
+
+        // Strings to store the received data
+        string headerData;
+        //string bodyData;
+        
+        // Set the callback function to process received body data
+        //curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        //curl_easy_setopt(curl, CURLOPT_WRITEDATA, &bodyData);
+        
+        /* we want the headers be written to this file handle */
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteHeaderCallback);
+        curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headerData);
+
+        // SSL verification
+        //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+        // ########### cURL execution ###########
+        // Perform the HTTP GET request
+        CURLcode res = curl_easy_perform(curl);
+
+        if (res != CURLE_OK) {
+            cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
+        } else {
+            // Print the curl responses
+            cout << "\033[1;34m===== Host Response =====\033[0m\n";
+            cout << "Header response:\n" << headerData << endl;
+            //cout << "Body response:\n" << bodyData << endl;
+
+            cout << "\033[1;34m===== TLS/SSL =====\033[0m\n";
+            // getting http code
+            long http_code = 0;
+            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+            cout << "HTTP Status Code: " << http_code << endl;
+
+            // getting tls version
+            const char* tls_version;
+            curl_easy_getinfo(curl, CURLINFO_TLS_SSL_PTR, &tls_version);
+            cout << "TLS/SSL Version: " << tls_version << "\n";
+
+            // Extract certificate details
+            struct curl_certinfo *certinfo;
+            curl_easy_getinfo(curl, CURLINFO_CERTINFO, &certinfo);
+            cout << "TLS/SSL Details: " << tls_version << "\n\n";
+            // Iterate through certificate chain and print details
+            for (int i = 0; i < certinfo->num_of_certs; i++) {
+                cout << "Certificate #" << i + 1 << " details:" << endl;
+                for (struct curl_slist* slist = certinfo->certinfo[i]; slist; slist = slist->next) {
+                    cout << slist->data << endl;
+                }
+            }
+        }
+
+        // Cleanup and release resources
+        curl_easy_cleanup(curl);
+    } else {
+        cerr << "Failed to initialize libcurl." << endl;
+    }
+
+};

@@ -14,6 +14,9 @@ using namespace std;
 CURL* curl = curl_easy_init();
 
 //get the host response
-static void getBanner(const char * ipAddress);
+void getBanner(const char * ipAddress);
+
+//gettint verbose flag from main
+extern bool verbose;
 
 #endif

@@ -3,28 +3,33 @@
 #include <cstring>
 #include <cstdlib>
 #include <unistd.h>
-
-//For simple makefile build TODO: prepare proper structure
-#include "portscan.cpp"
-#include "banner.cpp"
+#include "banner.cpp" //For simple makefile build, TODO: prepare proper structure
+#include "portscan.cpp" //For simple makefile build, TODO: prepare proper structure
 
 using namespace std;
 
 //global ip address variable
 const char * ipAddress;
 
+//Verbose switch
+bool verbose = false;
+
 //Print help message to the console
 void help(){
     printf(
     "Please specify a flag:\n"
     "  '-v' - Verbose mode\n"
-    "  '-q' - Quick scan for tls/ssl\n"
+    "  '-q' - Quick scan for tls/ssl related ports\n"
     "  '-s' - Scan system ports\n"
     "  '-u' - Scan user ports\n"
     "  '-p' - Scan private ports\n"
     "  '-a' - Scan all ports\n"
     "  '-h' - Display this help message\n"
     );
+}
+
+void startBanner() {
+    getBanner(ipAddress);
 }
 
 int main(int argc, char* argv[]){
@@ -96,6 +101,7 @@ int main(int argc, char* argv[]){
             case 'h':
                 help();
                 break;
+
             default:
                 help();
                 return 1;

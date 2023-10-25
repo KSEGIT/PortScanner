@@ -17,8 +17,13 @@ size_t WriteHeaderCallback(void* contents, size_t size, size_t nmemb, void* user
     return totalSize;
 }
 
-static void getBanner(const char * ipAddress) {
+void getBanner(const char * ipAddress) {
     if (curl) {
+
+        // Strings to store the received data
+        std::string headerData;
+        std::string bodyData;
+
         // Set the address to be fetched
         curl_easy_setopt(curl, CURLOPT_URL, ipAddress);
 
@@ -31,9 +36,12 @@ static void getBanner(const char * ipAddress) {
         // Set a function to suppress the body of the response
         //curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);
 
-        // Strings to store the received data
-        std::string headerData;
-        std::string bodyData;
+        // Set the CERTINFO option to get certificate details
+        curl_easy_setopt(curl, CURLOPT_CERTINFO, 1L);
+
+        if (verbose){
+        // Enable VERBOSE mode to see detailed SSL/TLS info
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);}
         
         // Set the callback function to process received data
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -44,8 +52,8 @@ static void getBanner(const char * ipAddress) {
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headerData);
 
         // Configure libcurl to use SSL
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+        //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
         // Perform the HTTP GET request
         CURLcode res = curl_easy_perform(curl);
@@ -68,6 +76,20 @@ static void getBanner(const char * ipAddress) {
                 const char* tls_version;
                 curl_easy_getinfo(curl, CURLINFO_TLS_SSL_PTR, &tls_version);
                 std::cout << "TLS/SSL Version: " << tls_version << "\n";
+
+                    // Extract certificate details
+                    struct curl_certinfo *certinfo;
+                    curl_easy_getinfo(curl, CURLINFO_CERTINFO, &certinfo);
+                    cout << "TLS/SSL Details: " << certinfo << "\n\n";
+                    // Iterate through certificate chain and print details
+                    for (int i = 0; i < certinfo->num_of_certs; i++) {
+                        cout << "Certificate #" << i + 1 << " details:" << endl;
+                        for (struct curl_slist* slist = certinfo->certinfo[i]; slist; slist = slist->next) {
+                            cout << slist->data << endl;
+
+                        }
+                    }
+
             } else {
                 std::cout << "TLS/SSL is not used for this connection.\n";
             }

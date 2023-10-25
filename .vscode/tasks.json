@@ -10,6 +10,7 @@
                 "-std=c++11",
                 "-Wall",
                 "-pthread",
+                "-lcurl",
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"

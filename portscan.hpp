@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <unordered_map>
 #include <thread>
 #include <iostream>
 #include <iomanip>
@@ -19,6 +18,11 @@ using namespace std;
 
 //global ip address variable from main.cpp file
 extern const char * ipAddress;
+//Verbose switch
+extern bool verbose;
+
+//extern void getBanner(const char * ipAddress);
+extern void startBanner();
 
 //Datastructure for port arguments
 struct port_args {
@@ -28,12 +32,9 @@ struct port_args {
     struct sockaddr_in* tower;
 };
 
-//Verbose switch
-static bool verbose = false;
-
-static unordered_map<int, string> portMap;
 //List of open ports
 static vector<int> openPorts;
+
 //Protects shared data from being simultaneously accessed by multiple threads.
 static mutex vecMutex;
 

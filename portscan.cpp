@@ -6,26 +6,22 @@ void count_openPorts(int start, int end){
     int sockfd;
     struct sockaddr_in tower;
 
-    //localhost is 127.0.0.1 (hopefully)
-    /* if (inet_pton(AF_INET, "127.0.0.1", &tower.sin_addr) < 1){
-        fprintf(stderr, "Problem loading your IP address\n");
-        exit(EXIT_FAILURE);
-    } */
+    // Setting memory buffer
     memset(&tower, 0, sizeof(tower));
     tower.sin_family = AF_INET;
     tower.sin_addr.s_addr = inet_addr(ipAddress);
 
-    for (int port_num = start; port_num <= end; port_num++){
-        tower.sin_port = htons(port_num);
+    for (int portNum = start; portNum <= end; portNum++){
+        tower.sin_port = htons(portNum);
         if ((sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0){
             fprintf(stderr, "Error: Failed to create socket.\nPlease try again\n");
             close(sockfd);
-            port_num--;
+            portNum--;
             continue;
         }
         if (connect(sockfd, (struct sockaddr*) &tower, sizeof(tower)) == 0){
             lock_guard<std::mutex> guard(vecMutex);
-            openPorts.push_back(port_num);
+            openPorts.push_back(portNum);
         }
         close(sockfd);
     }
@@ -33,32 +29,28 @@ void count_openPorts(int start, int end){
 
 //For printing verbose info
 void verbose_printer(char flag){
-    cout << "\n-verbose print debug\n\n";//debug
+    //cout << "\n-verbose print debug\n\n";//debug
     return;
 }
 
 //Printing open ports
 void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
-	switch(flag){
+	// Diffrent printing can be used depending on provided flag
+    switch(flag){
         case 's':
             std::cout << "\033[1;34m===== Open System Ports =====\033[0m\n";
             for (auto&& item : openPorts){
-                std::cout << "\033[1m" << item << "\033[0m";
-                if (portMap.find(item) != portMap.end()){
-                    std::cout << " -> " << portMap[item] << "\n";   
-                }
-                else{
-                    std::cout << "\n";
-                }
-			}
+            std::cout << "\033[1m" << item << "\033[0m\n";
+            }
+            std::cout << "\033[1;34m===== End Open System Ports =====\033[0m\n";
         	break;
 
         default:
             std::cout << "\033[1;34m===== Open Ports =====\033[0m\n";
-            for (int i : openPorts){
-            std::cout << "\033[1m" << i << "\033[0m\n";
+            for (auto&& item : openPorts){
+            std::cout << "\033[1m" << item << "\033[0m\n";
             }
-            std::cout << "\033[1;34m===== Open Ports =====\033[0m\n";
+            std::cout << "\033[1;34m===== End Open Ports =====\033[0m\n";
 	}   
 }
 
@@ -86,6 +78,13 @@ void thread_handler(const char * ipAddress, int start, int end, char flag){
 
     //Printing open ports to console
 	print_ports(openPorts, start, end, flag);
+
+    for (int port : openPorts) {
+        if (port == 80 || 443 || 445) {
+            //startBanner();
+            //getBanner(ipAddress);
+        }
+    }
 
     //TODO: Add verbose data
     if (verbose){
