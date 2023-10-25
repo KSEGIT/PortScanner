@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [ 
+        "-q",
+        "192.168.1.1",
+      ],
+      "cwd": "/Users/daniel/C++/PortScanner",
+      "program": "/Users/daniel/C++/PortScanner/main"
+    }
+  ]
+}
