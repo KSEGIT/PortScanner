@@ -16,15 +16,15 @@
 
 using namespace std;
 
-//global ip address variable from main.cpp file
+// Global IP address variable from main.cpp file
 extern const char * ipAddress;
-//Verbose switch
+// Verbose switch
 extern bool verbose;
 
 //extern void getBanner(const char * ipAddress);
 //extern void startBanner();
 
-//Datastructure for port arguments
+// Data structure for port arguments
 struct port_args {
     int start;
     int end;
@@ -32,10 +32,10 @@ struct port_args {
     struct sockaddr_in* tower;
 };
 
-//List of open ports
+// List of open ports
 static vector<int> openPorts;
 
-//Protects shared data from being simultaneously accessed by multiple threads.
+// Protects shared data from being simultaneously accessed by multiple threads.
 static mutex vecMutex;
 
 #endif

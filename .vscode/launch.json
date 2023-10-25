@@ -5,12 +5,9 @@
       "name": "C/C++ Runner: Debug Session",
       "type": "lldb",
       "request": "launch",
-      "args": [ 
-        "-s",
-        "192.168.1.1",
-      ],
+      "args": [],
       "cwd": "/Users/daniel/C++/PortScanner",
-      "program": "/Users/daniel/C++/PortScanner/main"
+      "program": "/Users/daniel/C++/PortScanner/build/Debug/outDebug"
     }
   ]
 }

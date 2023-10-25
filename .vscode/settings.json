@@ -114,5 +114,33 @@
   "C_Cpp_Runner.useLeakSanitizer": false,
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
-  "C_Cpp_Runner.msvcSecureNoWarnings": false
+  "C_Cpp_Runner.msvcSecureNoWarnings": false,
+  "grammarly.selectors": [
+    {
+      "language": "cpp",
+      "scheme": "file",
+      "pattern": "main.cpp"
+    },
+    {
+      "language": "cpp",
+      "scheme": "file",
+      "pattern": "portscan.cpp"
+    },
+    {
+      "language": "cpp",
+      "scheme": "file",
+      "pattern": "portscan.hpp"
+    },
+    {
+      "language": "cpp",
+      "scheme": "file",
+      "pattern": "banner.hpp"
+    },
+    {
+      "language": "cpp",
+      "scheme": "file",
+      "pattern": "banner.cpp"
+    }
+  ],
+  "C_Cpp.default.compilerPath": "/usr/bin/g++"
 }

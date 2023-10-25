@@ -48,11 +48,11 @@ void getBanner(const char * ipAddress) {
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &bodyData);
         
-        /* we want the headers be written to this file handle */
+        // Headers be written to this file handle
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteHeaderCallback);
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headerData);
 
-        // Configure libcurl to verify
+        // Configure libcurl to verify ssl connection
         //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 

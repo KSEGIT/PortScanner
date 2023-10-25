@@ -8,13 +8,13 @@
 
 using namespace std;
 
-//global ip address variable
+// Global IP address variable
 const char * ipAddress;
 
-//Verbose switch
+// Verbose switch
 bool verbose = false;
 
-//Print help message to the console
+// Print help message to the console
 void help(){
     printf(
     "Please specify a flag:\n"
@@ -34,39 +34,39 @@ void startBanner() {
 
 int main(int argc, char* argv[]){
 
-    //Print help when no arguments provided
+    // Print help when no arguments is provided
     if (argc == 1){
         help();
         return 1;
     }
 
-    //Print info when user use only "-" symbol as a argument
+    // Print info when a user uses only "-" symbol as an argument
     if (strcmp(argv[1], "-") == 0){
         printf("Please provide correct arguments!\n");
         help();
         return 1;
     }
 
-    //Prompting for IP address input
+    // Prompting for IP address input
     if (strcmp(argv[2], "") == 0){
         printf("Please provide Ip address.\n");
         help();
         return 1;
     }
 
-    //Printing help when to many arguments provided
+    // Printing help when too many arguments provided
     if (argc > 3){
         printf("Too many arguments provided, use help for more information.\n");
         help();
         return 1;
     } 
 
-    //Setting main variables
+    // Setting main variables
     int opt, startPort, endPort;
-    //Definition of global IP address variable
+    // Definition of global IP address variable
     ipAddress = argv[2];
     
-    //Start main loop
+    // Start main loop
     while((opt = getopt(argc, argv, "vqsupah")) != -1){
         switch (opt){
             case 'v':
