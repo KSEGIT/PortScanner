@@ -1,9 +1,8 @@
-/* a multithreaded C program to check for open ports on Linux machines. 
-   i think it should also work on macOS and BSD systems if compiled with g++ for the thread library */
 
-#include "pscan.hpp"
 
-void count_open_ports(int start, int end){
+#include "portscan.hpp"
+
+void count_openPorts(int start, int end){
     int sockfd;
     struct sockaddr_in tower;
 
@@ -25,27 +24,28 @@ void count_open_ports(int start, int end){
             continue;
         }
         if (connect(sockfd, (struct sockaddr*) &tower, sizeof(tower)) == 0){
-            //cout << std::setw(11);//debug
-            lock_guard<std::mutex> guard(vec_mtx);
-            open_ports.push_back(port_num);
+            lock_guard<std::mutex> guard(vecMutex);
+            openPorts.push_back(port_num);
         }
         close(sockfd);
     }
 }
 
+//For printing verbose info
 void verbose_printer(char flag){
     cout << "\n-verbose print debug\n\n";//debug
     return;
 }
 
-void print_ports(std::vector<int>& open_ports, int start, int end, char flag){
+//Printing open ports
+void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
 	switch(flag){
         case 's':
             std::cout << "\033[1;34m===== Open System Ports =====\033[0m\n";
-            for (auto&& item : open_ports){
+            for (auto&& item : openPorts){
                 std::cout << "\033[1m" << item << "\033[0m";
-                if (port_map.find(item) != port_map.end()){
-                    std::cout << " -> " << port_map[item] << "\n";   
+                if (portMap.find(item) != portMap.end()){
+                    std::cout << " -> " << portMap[item] << "\n";   
                 }
                 else{
                     std::cout << "\n";
@@ -55,14 +55,16 @@ void print_ports(std::vector<int>& open_ports, int start, int end, char flag){
 
         default:
             std::cout << "\033[1;34m===== Open Ports =====\033[0m\n";
-            for (int i : open_ports){
+            for (int i : openPorts){
             std::cout << "\033[1m" << i << "\033[0m\n";
             }
             std::cout << "\033[1;34m===== Open Ports =====\033[0m\n";
 	}   
 }
 
+//Multithreading handler
 void thread_handler(const char * ipAddress, int start, int end, char flag){
+    //Threads configuration
     int max_threads = thread::hardware_concurrency();
     thread thread_list[max_threads];
     int interval_size = (end - start + 1)/max_threads;
@@ -71,7 +73,7 @@ void thread_handler(const char * ipAddress, int start, int end, char flag){
     //create all the threads
     for (thread_num = 0; thread_num < max_threads; thread_num++){
         int right_bound = start + interval_size;
-        thread_list[thread_num] = thread(count_open_ports, start, right_bound);
+        thread_list[thread_num] = thread(count_openPorts, start, right_bound);
         start = right_bound + 1;
     }
     //round up all the threads
@@ -79,10 +81,13 @@ void thread_handler(const char * ipAddress, int start, int end, char flag){
         thread_list[thread_num].join();
     }
 
-	sort(open_ports.begin(), open_ports.end());
+    //Sorting list of open ports
+	sort(openPorts.begin(), openPorts.end());
 
-	print_ports(open_ports, start, end, flag);
+    //Printing open ports to console
+	print_ports(openPorts, start, end, flag);
 
+    //TODO: Add verbose data
     if (verbose){
         verbose_printer(flag);
     }

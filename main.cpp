@@ -1,7 +1,19 @@
-#include "pscan.cpp"
+
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include <unistd.h>
+
+//For simple makefile build TODO: prepare proper structure
+#include "portscan.cpp"
 #include "banner.cpp"
 
-//Print help to the console
+using namespace std;
+
+//global ip address variable
+const char * ipAddress;
+
+//Print help message to the console
 void help(){
     printf(
     "Please specify a flag:\n"
@@ -23,14 +35,14 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    //Print info when user use only - as a argument
+    //Print info when user use only "-" symbol as a argument
     if (strcmp(argv[1], "-") == 0){
         printf("Please provide correct arguments!\n");
         help();
         return 1;
     }
 
-    //Prompting for Ip address input
+    //Prompting for IP address input
     if (strcmp(argv[2], "") == 0){
         printf("Please provide Ip address.\n");
         help();
@@ -39,16 +51,17 @@ int main(int argc, char* argv[]){
 
     //Printing help when to many arguments provided
     if (argc > 3){
-        printf("Too many arguments use help for more information.\n");
+        printf("Too many arguments provided, use help for more information.\n");
         help();
         return 1;
     } 
 
-    //Start main loop
+    //Setting main variables
     int opt, startPort, endPort;
-    //ip address variable
+    //Definition of global IP address variable
     ipAddress = argv[2];
-    //printf(ipAddress);//debug
+
+    //Start main loop
     while((opt = getopt(argc, argv, "vqsupah")) != -1){
         switch (opt){
             case 'v':
