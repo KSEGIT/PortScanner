@@ -100,4 +100,4 @@ void getBanner(const char * ipAddress) {
         std::cerr << "Failed to initialize libcurl." << std::endl;
     }
 
-};
+}

@@ -60,13 +60,13 @@ void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
 }
 
 // Multithreading handler
-void thread_handler(const char * ipAddress, int start, int end, char flag){
+void thread_handler(unsigned int start, unsigned int end, char flag){
 
     // Threads configuration
-    int max_threads = thread::hardware_concurrency();
+    unsigned int max_threads = thread::hardware_concurrency();
     thread thread_list[max_threads];
-    int interval_size = (end - start + 1)/max_threads;
-    int thread_num;
+    unsigned int interval_size = (end - start + 1)/max_threads;
+    unsigned int thread_num;
 
     // create all the threads
     for (thread_num = 0; thread_num < max_threads; thread_num++){
