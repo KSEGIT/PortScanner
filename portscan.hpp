@@ -19,7 +19,7 @@ using namespace std;
 // Global IP address variable from main.cpp file
 extern const char * ipAddress;
 // Verbose switch
-extern bool verbose;
+extern bool g_verbose;
 
 //extern void getBanner(const char * ipAddress);
 //extern void startBanner();
@@ -37,5 +37,7 @@ static vector<int> openPorts;
 
 // Protects shared data from being simultaneously accessed by multiple threads.
 static mutex vecMutex;
+
+void thread_handler(int start, int end, char flag);
 
 #endif

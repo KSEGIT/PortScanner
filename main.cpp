@@ -3,8 +3,8 @@
 #include <cstring>
 #include <cstdlib>
 #include <unistd.h>
-#include "banner.cpp" //For simple makefile build, TODO: prepare proper structure
-#include "portscan.cpp" //For simple makefile build, TODO: prepare proper structure
+#include "banner.hpp"
+#include "portscan.hpp"
 
 using namespace std;
 
@@ -12,7 +12,7 @@ using namespace std;
 const char * ipAddress;
 
 // Verbose switch
-bool verbose = false;
+bool g_verbose = false;
 
 // Print help message to the console
 void help(){
@@ -27,10 +27,6 @@ void help(){
     "  '-h' - Display this help message\n"
     );
 }
-/* 
-void startBanner() {
-    getBanner(ipAddress);
-} */
 
 int main(int argc, char* argv[]){
 
@@ -71,7 +67,7 @@ int main(int argc, char* argv[]){
     while((opt = getopt(argc, argv, "vqsupah")) != -1){
         switch (opt){
             case 'v':
-                verbose = true;
+                g_verbose = true;
                 break;
             case 'q':
                 startPort = 440;

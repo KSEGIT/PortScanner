@@ -3,6 +3,9 @@
 
 #include "banner.hpp"
 
+// Initialize libcurl
+CURL* curl = curl_easy_init();
+
 // Callback function to write received body data into a string
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
     size_t totalSize = size * nmemb;
@@ -40,7 +43,7 @@ void getBanner(const char * ipAddress) {
         // Set the CERTINFO option to get certificate details
         curl_easy_setopt(curl, CURLOPT_CERTINFO, 1L);
 
-        if (verbose){
+        if (g_verbose){
         // Enable VERBOSE mode to see detailed SSL/TLS info
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);}
         
