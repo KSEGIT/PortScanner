@@ -21,16 +21,8 @@ extern const char * ipAddress;
 // Verbose switch
 extern bool g_verbose;
 
-//extern void getBanner(const char * ipAddress);
+extern void getBanner(const char * ipAddress);
 //extern void startBanner();
-
-// Data structure for port arguments
-struct port_args {
-    int start;
-    int end;
-    int sockfd;
-    struct sockaddr_in* tower;
-};
 
 // List of open ports
 static vector<int> openPorts;

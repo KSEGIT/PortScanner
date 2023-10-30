@@ -49,11 +49,9 @@ void count_openPorts(int start, int end) {
     }
 }
 
-
-
 // For printing verbose info
 void verbose_printer(char flag){
-    std::cout << "\n### Port Scan Finished ###\n\n";
+    std::cout << "\033[1;34m===== Port Scan Finished =====\033[0m\n";
     return;
 }
 
@@ -84,9 +82,9 @@ void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
     // that's much more efficient with large numbers of elements
     if(std::find(openPorts.begin(), openPorts.end(), 80) != openPorts.end()) {
        if (g_verbose){
-       std::cout << "\nStarting Banner Scan\n";
+       std::cout << "\033[1;34m===== Starting Banner Scan =====\033[0m\n";
        }
-       //getBanner(ipAddress);
+       getBanner(ipAddress);
     }     
 }
 
