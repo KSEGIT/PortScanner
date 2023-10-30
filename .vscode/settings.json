@@ -58,9 +58,42 @@
     "deque": "cpp",
     "stack": "cpp"
   },
+  "grammarly.selectors": [
+    {
+      "language": "cpp",
+      "scheme": "file",
+      "pattern": "main.cpp"
+    },
+    {
+      "language": "cpp",
+      "scheme": "file",
+      "pattern": "portscan.cpp"
+    },
+    {
+      "language": "cpp",
+      "scheme": "file",
+      "pattern": "portscan.hpp"
+    },
+    {
+      "language": "cpp",
+      "scheme": "file",
+      "pattern": "banner.hpp"
+    },
+    {
+      "language": "cpp",
+      "scheme": "file",
+      "pattern": "banner.cpp"
+    }
+  ],
+  "C_Cpp.default.cppStandard": "c++17",
+  "C_Cpp.default.compilerPath": "/usr/bin/g++",
+  "C_Cpp.default.intelliSenseMode": "gcc-x64",
+  "C_Cpp.default.compilerArgs": [
+    "-std=c++17"
+  ],
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
-  "C_Cpp_Runner.debuggerPath": "lldb",
+  "C_Cpp_Runner.debuggerPath": "gdb",
   "C_Cpp_Runner.cStandard": "c11",
   "C_Cpp_Runner.cppStandard": "c++20",
   "C_Cpp_Runner.msvcBatchPath": "",
@@ -118,32 +151,5 @@
   "C_Cpp_Runner.useLeakSanitizer": false,
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
-  "C_Cpp_Runner.msvcSecureNoWarnings": false,
-  "grammarly.selectors": [
-    {
-      "language": "cpp",
-      "scheme": "file",
-      "pattern": "main.cpp"
-    },
-    {
-      "language": "cpp",
-      "scheme": "file",
-      "pattern": "portscan.cpp"
-    },
-    {
-      "language": "cpp",
-      "scheme": "file",
-      "pattern": "portscan.hpp"
-    },
-    {
-      "language": "cpp",
-      "scheme": "file",
-      "pattern": "banner.hpp"
-    },
-    {
-      "language": "cpp",
-      "scheme": "file",
-      "pattern": "banner.cpp"
-    }
-  ]
+  "C_Cpp_Runner.msvcSecureNoWarnings": false
 }

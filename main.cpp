@@ -3,15 +3,15 @@
 #include <cstring>
 #include <cstdlib>
 #include <unistd.h>
-#include "banner.hpp"
 #include "portscan.hpp"
+#include "banner.hpp"
 
 using namespace std;
 
 // Global IP address variable
 const char * ipAddress;
 
-// Verbose switch
+// Global verbose switch
 bool g_verbose = false;
 
 // Print help message to the console

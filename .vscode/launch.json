@@ -2,6 +2,30 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "(lldb) Launch",
+      "type": "cppdbg",
+      "request": "launch",
+      "targetArchitecture": "x86_64",
+      "program": "${workspaceFolder}/portscan",
+      "args": [
+        "-s",
+        "192.168.1.1"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "preLaunchTask": "useMakefile",
+      "setupCommands": [
+        {
+          "description": "Build with make",
+          "text": "cd ${workspaceFolder} && make",
+          "ignoreFailures": true
+        }
+      ]
+    },
+    {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",
@@ -10,8 +34,8 @@
       "externalConsole": false,
       "cwd": "/Users/daniel/C++/PortScanner",
       "program": "/Users/daniel/C++/PortScanner/build/Debug/outDebug",
-      "MIMode": "lldb",
-      "miDebuggerPath": "lldb",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
@@ -19,22 +43,6 @@
           "ignoreFailures": true
         }
       ]
-    },
-    {
-      "name": "C/C++: g++ build and lldb debug active file",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${fileDirname}/${fileBasenameNoExtension}",
-      "args": [
-        "-q",
-        "192.168.1.1"
-      ],
-      "stopAtEntry": false,
-      "cwd": "${fileDirname}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "lldb",
-      "preLaunchTask": "C/C++: g++ kompiluj aktywny plik"
     }
   ]
 }
