@@ -23,7 +23,7 @@ void count_openPorts(int start, int end) {
     // Setting memory buffer
     memset(&tower, 0, sizeof(tower));
     tower.sin_family = AF_INET;
-    tower.sin_addr.s_addr = inet_addr(ipAddress);
+    tower.sin_addr.s_addr = inet_addr(g_ipAddress);
 
     for (int portNum = start; portNum <= end; portNum++) {
         tower.sin_port = htons(portNum);
@@ -35,7 +35,7 @@ void count_openPorts(int start, int end) {
 
             if (connect(sockfd, (struct sockaddr*)&tower, sizeof(tower)) == 0) {
                 {
-                    std::lock_guard<std::mutex> guard(vecMutex);
+                    std::lock_guard<std::mutex> lock(vecMutex);
                     openPorts.push_back(portNum);
                 }
             }
@@ -43,7 +43,7 @@ void count_openPorts(int start, int end) {
             close(sockfd); // Close the socket when it's successfully created
         } catch (const std::exception &e) {
             std::cerr << "Error: " << e.what() << std::endl;
-            // Optionally, you can continue or break the loop depending on your requirements.
+            // Optionally, continue or break the loop depending on requirements.
             continue;
         }
     }
@@ -51,8 +51,29 @@ void count_openPorts(int start, int end) {
 
 // For printing verbose info
 void verbose_printer(char flag){
-    std::cout << "\033[1;34m===== Port Scan Finished =====\033[0m\n";
+    std::cout << "\033[1;34m===== Port Scan Finished - with flag: " << (char)flag << " =====\033[0m\n";
     return;
+}
+
+// Preparing ip address for banner scanner (adding port)
+const char* ip_and_port (const char* g_ipAddress ,const char* portNumber){
+
+    // Convert the C-style strings to C++ strings
+    std::string ipAddressString(g_ipAddress);
+    std::string additionalString(portNumber);
+
+    // Concatenate the C++ strings
+    std::string combinedString = ipAddressString + additionalString;
+
+    // Convert the combined string back to a const char*
+    const char* result = combinedString.c_str();
+
+    // Verbose ip combination print
+    if (g_verbose){
+    std::cout << "Combined IP Address: " << result << std::endl;
+    }
+
+    return result;
 }
 
 // Printing open ports
@@ -65,7 +86,7 @@ void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
             for (auto&& item : openPorts){
             std::cout << "\033[1m" << item << "\033[0m\n";
             }
-            std::cout << "\n";
+            std::cout << "\033[1;34m===== END System Open Ports =====\033[0m\n";
         	break;
 
         default:
@@ -73,19 +94,35 @@ void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
             for (auto&& item : openPorts){
             std::cout << "\033[1m" << item << "\033[0m\n";
             }
-            std::cout << "\n";
+            std::cout << "\033[1;34m===== END Open Ports =====\033[0m\n";
 	}
 
     // TODO: Possible point of optimalization:
-    // std::find(vec.begin(), vec.end(), x) runs in O(n) time, 
+    // For loop or std::find runs in O(n) time, 
     // but std::set has its own find() member (ie. myset.find(x)) which runs in O(log n) time - 
-    // that's much more efficient with large numbers of elements
-    if(std::find(openPorts.begin(), openPorts.end(), 80) != openPorts.end()) {
-       if (g_verbose){
-       std::cout << "\033[1;34m===== Starting Banner Scan =====\033[0m\n";
-       }
-       getBanner(ipAddress);
-    }     
+    // that's much more efficient with large numbers of elements - consider using sets insted of vector
+    /*      if(std::find(openPorts.begin(), openPorts.end(), 80) != openPorts.end()) {
+                if (g_verbose){
+                std::cout << "\033[1;34m===== Starting Banner Scan =====\033[0m\n";
+                }
+                getBanner(ipAddress);
+            }   */
+
+    for (int num : openPorts) {
+        if (num == 80) {
+            std::cout << "\033[1;34m===== Starting Banner Scan for port 80 =====\033[0m\n";
+            const char * ipAddress = ip_and_port(g_ipAddress, ":80");
+            getBanner(ipAddress);
+        } else if (num == 443) {
+            std::cout << "\033[1;34m===== Starting Banner Scan for port 443 =====\033[0m\n";
+            const char * ipAddress = ip_and_port(g_ipAddress, ":443");
+            getBanner(ipAddress);
+         } else if (num == 445) {
+            std::cout << "\033[1;34m===== Starting Banner Scan for port 445 =====\033[0m\n";
+            const char * ipAddress = ip_and_port(g_ipAddress, ":445");
+            getBanner(ipAddress);
+        }
+    }    
 }
 
 // Multithreading handler
@@ -101,16 +138,16 @@ void thread_handler(int start, int end, char flag){
     unsigned int maxThreads = std::thread::hardware_concurrency();
     
     // Adjust this value as needed
-    int interval_size = (end - start) / maxThreads;
+    int intervalSize = (end - start) / maxThreads;
     
     // List of threads
     std::vector<std::thread> thread_list;
 
     // Thread loop
     for (unsigned int thread_num = 0; thread_num < maxThreads; ++thread_num) {
-        int right_bound = start + interval_size;
-        thread_list.push_back(std::thread(count_openPorts, start, right_bound));
-        start = right_bound + 1;
+        int rightBound = start + intervalSize;
+        thread_list.push_back(std::thread(count_openPorts, start, rightBound));
+        start = rightBound + 1;
         if (g_verbose){
         std::cout << "Thread " << thread_num << " ID: " << thread_list[thread_num].get_id() << std::endl;
         }

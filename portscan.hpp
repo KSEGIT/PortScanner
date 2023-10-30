@@ -17,19 +17,21 @@
 using namespace std;
 
 // Global IP address variable from main.cpp file
-extern const char * ipAddress;
+extern const char * g_ipAddress;
+
 // Verbose switch
 extern bool g_verbose;
 
+// Get banner funtion from banner.hpp
 extern void getBanner(const char * ipAddress);
-//extern void startBanner();
 
 // List of open ports
 static vector<int> openPorts;
 
 // Protects shared data from being simultaneously accessed by multiple threads.
-static mutex vecMutex;
+static std::mutex vecMutex;
 
+// Thread handler function from portscan.hpp
 void thread_handler(int start, int end, char flag);
 
 #endif

@@ -9,7 +9,7 @@
 using namespace std;
 
 // Global IP address variable
-const char * ipAddress;
+const char * g_ipAddress;
 
 // Global verbose switch
 bool g_verbose = false;
@@ -25,6 +25,8 @@ void help(){
     "  '-p' - Scan private ports\n"
     "  '-a' - Scan all ports\n"
     "  '-h' - Display this help message\n"
+    "Remember to provide ip/hostname as argument\n"
+    "Example use: ./portscan -q 192.168.1.1\n"
     );
 }
 
@@ -36,16 +38,8 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    // Print info when a user uses only "-" symbol as an argument
-    if (strcmp(argv[1], "-") == 0){
-        printf("Please provide correct arguments!\n");
-        help();
-        return 1;
-    }
-
-    // Prompting for IP address input
-    if (strcmp(argv[2], "") == 0){
-        printf("Please provide Ip address.\n");
+    // Print help when no arguments is provided
+    if (argc == 2){
         help();
         return 1;
     }
@@ -57,11 +51,25 @@ int main(int argc, char* argv[]){
         return 1;
     } 
 
+    // Print info when a user uses only "-" symbol as an argument
+    if (strcmp(argv[1], "-") == 0){
+        printf("Please provide correct flags!\n");
+        help();
+        return 1;
+    }  
+
+    // Prompting for IP address input
+    if (strcmp(argv[2], "") == 0){
+        printf("Please provide Ip address.\n");
+        help();
+        return 1;
+    }
+
     // Setting main variables
     int opt;
     unsigned int startPort, endPort;
     // Definition of global IP address variable
-    ipAddress = argv[2];
+    g_ipAddress = argv[2];
     
     // Start main loop
     while((opt = getopt(argc, argv, "vqsupah")) != -1){
@@ -70,10 +78,9 @@ int main(int argc, char* argv[]){
                 g_verbose = true;
                 break;
             case 'q':
-                startPort = 440;
+                startPort = 70;
                 endPort = 450;
                 thread_handler(startPort, endPort, (char) opt);
-                //getBanner(ipAddress);
                 break;    
             case 's':
                 startPort = 0;
@@ -104,5 +111,6 @@ int main(int argc, char* argv[]){
                 return 1;
         }
     }
+    //getBanner(g_ipAddress);
     return 0;
 }

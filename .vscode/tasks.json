@@ -29,10 +29,24 @@
 			"detail": "compiler: /usr/bin/g++"
 		},
 		{
+			"label": "useCleanMakefile",
+			"command": "make",
+			"args": ["clean"],
+			"type": "shell"
+		},
+		{
 			"label": "useMakefile",
 			"command": "make",
 			"args": [],
 			"type": "shell"
+		},
+		{
+			"label": "BuildClean",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"useCleanMakefile",
+				"useMakefile"
+			]
 		}
 	]
 }
