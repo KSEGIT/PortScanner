@@ -1,7 +1,7 @@
 
 # PortScanner
 
-PortScanner is a versatile and efficient multithreaded tool designed to scan ports on remote hosts, providing you with valuable information about open ports, banner information, and TLS/SSL verification. This tool is designed to help you assess the security and services of a target system quickly and effectively.
+PortScanner is a versatile and efficient multithreaded tool designed to scan ports on remote hosts, providing you with additional information about open ports - banner information, and TLS/SSL verification. This tool is designed to help you assess the security and services of a target system quickly and effectively.
 
 ## Features
 

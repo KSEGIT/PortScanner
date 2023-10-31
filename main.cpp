@@ -116,6 +116,5 @@ int main(int argc, char* argv[]){
                 return 1;
         }
     }
-    //getBanner(g_ipAddress);
     return 0;
 }

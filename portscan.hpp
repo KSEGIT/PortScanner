@@ -17,6 +17,7 @@
 #include <mutex>
 #include <vector>
 #include <algorithm>
+#include <netdb.h>
 
 using namespace std;
 

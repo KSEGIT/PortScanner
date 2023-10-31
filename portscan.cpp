@@ -18,38 +18,58 @@ void count_openPorts(int start, int end) {
     }
 
     if (g_verbose){
-    // Threading debug
-    // std::this_thread::sleep_for(std::chrono::seconds(2));
-    std::cout << "Thread started open port search with range: " << start << " : " << end << std::endl;
+        // Threading debug
+        // std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::cout << "Thread started open port search with range: " << start << " : " << end << std::endl;
     }
 
-    // Setting memory buffer
-    memset(&tower, 0, sizeof(tower));
-    tower.sin_family = AF_INET;
-    tower.sin_addr.s_addr = inet_addr(g_ipAddress);
+    // Prepare addrinfo hints
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET; // IPv4
+    hints.ai_socktype = SOCK_STREAM;
 
-    for (int portNum = start; portNum <= end; portNum++) {
-        tower.sin_port = htons(portNum);
+    // Resolve the hostname to an IP address
+    struct addrinfo *result;
+    int status = getaddrinfo(g_ipAddress, NULL, &hints, &result);
+    if (status != 0) {
+        cerr << "Failed to resolve hostname: " << g_ipAddress << endl;
+        return;
+    }
 
-        try {
-            if ((sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
-                throw std::runtime_error("Failed to create socket.");
-            }
+    // Loop through the resolved IP addresses
+    for (struct addrinfo *addr = result; addr != NULL; addr = addr->ai_next) {
+        tower.sin_family = AF_INET;
+        tower.sin_addr = ((struct sockaddr_in*)(addr->ai_addr))->sin_addr;
 
-            if (connect(sockfd, (struct sockaddr*)&tower, sizeof(tower)) == 0) {
-                {
-                    std::lock_guard<std::mutex> lock(vecMutex);
-                    openPorts.push_back(portNum);
+        for (int portNum = start; portNum <= end; portNum++) {
+            tower.sin_port = htons(portNum);
+
+            try {
+                if ((sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
+                    throw std::runtime_error("Failed to create socket.");
                 }
-            }
 
-            close(sockfd); // Close the socket when it's successfully created
-        } catch (const std::exception &e) {
-            std::cerr << "Error: " << e.what() << std::endl;
-            // Optionally, continue or break the loop depending on requirements.
-            continue;
+                if (connect(sockfd, (struct sockaddr*)&tower, sizeof(tower)) == 0) {
+                    {
+                        // TODO further resarch on thread-safe container like 
+                        // std::vector<std::atomic<int>> to avoid locking overhead 
+                        //when accessing the vector in a read-only context from multiple threads.
+                        std::lock_guard<std::mutex> lock(vecMutex);
+                        openPorts.push_back(portNum);
+                    }
+                }
+                close(sockfd); // Close the socket when it's successfully created
+            } catch (const std::exception &e) {
+                std::cerr << "Error: " << e.what() << std::endl;
+                // Optionally, continue or break the loop depending on requirements.
+                continue;
+            }
         }
     }
+
+    // Free the addrinfo structure
+    freeaddrinfo(result);
 }
 
 // For printing verbose info
@@ -126,8 +146,7 @@ void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
                 getBanner(ipAddress);
             } else if (num == 445) {
                 std::cout << "\033[1;34m===== Starting Banner Scan for port 445 =====\033[0m\n";
-                const char * ipAddress = ip_and_port(g_ipAddress, ":445");
-                getBanner(ipAddress);
+                std::cout << "TODO: implement samba comunication\n";
             }
         } 
     }   
@@ -151,6 +170,7 @@ void thread_handler(int start, int end, char flag){
     // List of threads
     std::vector<std::thread> thread_list;
 
+    std::cout << "Starting range port scan...\n";
     // Thread loop
     for (unsigned int thread_num = 0; thread_num < maxThreads; ++thread_num) {
         int rightBound = start + intervalSize;

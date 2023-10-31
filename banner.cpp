@@ -8,7 +8,7 @@
 #include "banner.hpp"
 
 // Callback function to write received body data into a string
-size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
+size_t WriteBodyCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
     size_t totalSize = size * nmemb;
     output->append(static_cast<char*>(contents), totalSize);
     return totalSize;
@@ -63,7 +63,7 @@ void getBanner(const char * ipAddress) {
             curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headerData);
 
             // Set the callback function to process received data
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteBodyCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &bodyData);
 
             // Set True for getting certificate information
