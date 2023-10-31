@@ -1,3 +1,7 @@
+// #PortScanner
+// Daniel Kiska
+// 26.10.2023
+
 // Based on https://curl.se/libcurl/c/sepheaders.html
 // For more information see: https://curl.se/libcurl/c/libcurl-easy.html
 
@@ -28,7 +32,7 @@ size_t WriteHeaderCallback(void* contents, size_t size, size_t nmemb, void* user
         std::cout << "SSL/TLS Version: " << version << std::endl;
     }
     return size * nmemb;
-} */
+}*/
 
 void getBanner(const char * ipAddress) {
     // Initialize libcurl

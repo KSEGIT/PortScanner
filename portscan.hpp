@@ -1,3 +1,7 @@
+// #PortScanner
+// Daniel Kiska
+// 26.10.2023
+
 #ifndef PORTSCAN_HPP
 #define PORTSCAN_HPP
 

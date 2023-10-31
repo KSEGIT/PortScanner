@@ -1,4 +1,8 @@
 
+// #PortScanner
+// Daniel Kiska
+// 26.10.2023
+
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
@@ -68,6 +72,7 @@ int main(int argc, char* argv[]){
     // Setting main variables
     int opt;
     unsigned int startPort, endPort;
+    
     // Definition of global IP address variable
     g_ipAddress = argv[2];
     
