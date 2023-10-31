@@ -19,26 +19,26 @@ void help(){
     printf(
     "Please specify a flag:\n"
     "  '-v' - Verbose mode\n"
-    "  '-q' - Quick scan for tls/ssl related ports\n"
+    "  '-q' - Quick scan for TLS/SSL related ports\n"
     "  '-s' - Scan system ports\n"
     "  '-u' - Scan user ports\n"
     "  '-p' - Scan private ports\n"
     "  '-a' - Scan all ports\n"
     "  '-h' - Display this help message\n"
-    "Remember to provide ip/hostname as argument\n"
+    "Remember to provide IP/hostname as argument\n"
     "Example use: ./portscan -q 192.168.1.1\n"
     );
 }
 
 int main(int argc, char* argv[]){
 
-    // Print help when no arguments is provided
+    // Print help when no arguments are provided
     if (argc == 1){
         help();
         return 1;
     }
 
-    // Print help when no arguments is provided
+    // Print help when no arguments are provided
     if (argc == 2){
         help();
         return 1;

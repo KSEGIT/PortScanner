@@ -7,6 +7,9 @@
 #include <cstring>      
 #include <cstdlib>
 #include <curl/curl.h>
+
+// TODO more detailed ssl information
+// use -lssl -lcrypto
 //#include <openssl/ssl.h>
 
 using namespace std;

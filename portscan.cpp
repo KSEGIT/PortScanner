@@ -79,7 +79,7 @@ const char* ip_and_port (const char* g_ipAddress ,const char* portNumber){
 // Printing open ports
 void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
 
-	// Different printing can be used depending on provided flag
+	// Different printing can be used depending on the provided flag
     switch(flag){
         case 's':
             std::cout << "\033[1;34m===== Open System Ports =====\033[0m\n";
@@ -97,32 +97,37 @@ void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
             std::cout << "\033[1;34m===== END Open Ports =====\033[0m\n";
 	}
 
-    // TODO: Possible point of optimalization:
+    // TODO: Possible point of optimization:
     // For loop or std::find runs in O(n) time, 
     // but std::set has its own find() member (ie. myset.find(x)) which runs in O(log n) time - 
-    // that's much more efficient with large numbers of elements - consider using sets insted of vector
+    // that's much more efficient with large numbers of elements - consider using sets instead of vector
     /*      if(std::find(openPorts.begin(), openPorts.end(), 80) != openPorts.end()) {
                 if (g_verbose){
                 std::cout << "\033[1;34m===== Starting Banner Scan =====\033[0m\n";
                 }
                 getBanner(ipAddress);
             }   */
-
-    for (int num : openPorts) {
-        if (num == 80) {
-            std::cout << "\033[1;34m===== Starting Banner Scan for port 80 =====\033[0m\n";
-            const char * ipAddress = ip_and_port(g_ipAddress, ":80");
-            getBanner(ipAddress);
-        } else if (num == 443) {
-            std::cout << "\033[1;34m===== Starting Banner Scan for port 443 =====\033[0m\n";
-            const char * ipAddress = ip_and_port(g_ipAddress, ":443");
-            getBanner(ipAddress);
-         } else if (num == 445) {
-            std::cout << "\033[1;34m===== Starting Banner Scan for port 445 =====\033[0m\n";
-            const char * ipAddress = ip_and_port(g_ipAddress, ":445");
-            getBanner(ipAddress);
-        }
-    }    
+    if (openPorts.empty()) { 
+        std::cout << "No open ports found, trying to get any host response..." << std::endl;
+        getBanner(g_ipAddress);
+    }
+    else{
+        for (int num : openPorts) {
+            if (num == 80) {
+                std::cout << "\033[1;34m===== Starting Banner Scan for port 80 =====\033[0m\n";
+                const char * ipAddress = ip_and_port(g_ipAddress, ":80");
+                getBanner(ipAddress);
+            } else if (num == 443) {
+                std::cout << "\033[1;34m===== Starting Banner Scan for port 443 =====\033[0m\n";
+                const char * ipAddress = ip_and_port(g_ipAddress, ":443");
+                getBanner(ipAddress);
+            } else if (num == 445) {
+                std::cout << "\033[1;34m===== Starting Banner Scan for port 445 =====\033[0m\n";
+                const char * ipAddress = ip_and_port(g_ipAddress, ":445");
+                getBanner(ipAddress);
+            }
+        } 
+    }   
 }
 
 // Multithreading handler

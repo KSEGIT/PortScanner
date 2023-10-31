@@ -18,6 +18,7 @@ size_t WriteHeaderCallback(void* contents, size_t size, size_t nmemb, void* user
     return totalSize;
 }
 
+// TODO more detailed ssl information
 // Callback function to capture SSL/TLS version information
 /* size_t SSLEngineInfoCallback(void* ptr, size_t size, size_t nmemb, void* data) {
     const struct curl_tlssessioninfo* info = static_cast<const struct curl_tlssessioninfo*>(ptr);
@@ -82,17 +83,18 @@ void getBanner(const char * ipAddress) {
                 curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
                 std::cout << "HTTP Status Code: " << http_code << std::endl;
                 if (http_code == 200) {
-                    
-                    // Set the callback function to capture SSL/TLS version
-/*                     curl_easy_setopt(curl, CURLOPT_SSLENGINE_DEFAULT, 1L);
-                    curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, curl);
-                    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, SSLEngineInfoCallback); */
 
-                    std::cout << "Getting TLS/SSL information...\n";
+                    /* // TODO more detailed ssl information
+                    // Set the callback function to capture SSL/TLS version
+                    curl_easy_setopt(curl, CURLOPT_SSLENGINE_DEFAULT, 1L);
+                    curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, curl);
+                    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, SSLEngineInfoCallback); 
+                    */
 
                     // Get certificate information
-                                // Set the CERTINFO option to get certificate details
-
+                    std::cout << "Getting TLS/SSL information...\n";
+                    
+                    // Set the CERTINFO option to get certificate details
                     struct curl_certinfo *certinfo;
                     curl_easy_getinfo(curl, CURLINFO_CERTINFO, &certinfo);
 
@@ -113,32 +115,6 @@ void getBanner(const char * ipAddress) {
                     } else {
                         cout << "No certificate information available." << endl;
                     }
-
-
-
-
-
-
-                    //const char* tls_version;
-                    //curl_easy_getinfo(curl, CURLINFO_TLS_SSL_PTR, &tls_version);
-                    //std::cout << "TLS/SSL Version: " << tls_version << "\n";
-                    // Extract certificate details
-                    /* struct curl_certinfo *certinfo;
-                    curl_easy_getinfo(curl, CURLINFO_CERTINFO, &certinfo);
-                    cout << "Number of certificates: " << certinfo->num_of_certs << "\n" ;
-                    cout << "TLS/SSL Details: " << certinfo << "\n\n"; */
-                    
-                    // Iterate through certificate chain and print details
-/*                     for (int i = 0; i < certinfo->num_of_certs; i++) {
-                        cout << "Certificate #" << i + 1 << " details:" << endl;
-                        
-                        for (struct curl_slist* slist = certinfo->certinfo[i]; slist; slist = slist->next) {
-                            cout << slist->data << endl;
-                        }
-                    } */
-
-                    
-
                 } else {
                     std::cout << "Unable to connect to host\n";
                 }
