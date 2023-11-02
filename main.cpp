@@ -83,9 +83,10 @@ int main(int argc, char* argv[]){
                 g_verbose = true;
                 break;
             case 'q':
-                startPort = 70;
-                endPort = 450;
-                thread_handler(startPort, endPort, (char) opt);
+                scanSingleOpenPort (80, (char) opt);
+                scanSingleOpenPort (443, (char) opt);
+                scanSingleOpenPort (445, (char) opt);
+                runPrintPort ((char) opt);
                 break;    
             case 's':
                 startPort = 0;

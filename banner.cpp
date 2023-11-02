@@ -68,6 +68,8 @@ void getBanner(const char * ipAddress) {
 
             // Set True for getting certificate information
             curl_easy_setopt(curl, CURLOPT_CERTINFO, 1L);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
             // Perform HTTP GET request 
             CURLcode res = curl_easy_perform(curl);
@@ -83,9 +85,9 @@ void getBanner(const char * ipAddress) {
 
                 std::cout << "\033[1;34m===== TLS/SSL =====\033[0m\n";
                 // Check if TLS/SSL is used
-                long http_code = 0;
-                curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
-                std::cout << "HTTP Status Code: " << http_code << std::endl;
+                long http_code = 200;
+                //curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+                //std::cout << "HTTP Status Code: " << http_code << std::endl;
                 if (http_code == 200) {
 
                     /* // TODO more detailed ssl information
@@ -104,7 +106,7 @@ void getBanner(const char * ipAddress) {
 
                     // Check if there is certificate information available
                     if (certinfo) {
-                        cout << "Number of certificates: " << certinfo->num_of_certs << "\n";
+                        cout << "Number of certificates: " << certinfo->num_of_certs << "\n\n";
 
                         for (int i = 0; i < certinfo->num_of_certs; i++) {
                             cout << "Certificate #" << i + 1 << " details:" << endl;

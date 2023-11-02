@@ -4,18 +4,11 @@
 
 #include "portscan.hpp"
 
-
 void scanRangeOpenPorts(int start, int end) {
+    
     // Data structure for port arguments
     int sockfd;
     struct sockaddr_in tower;
-    // Setting memory buffer
-    memset(&tower, 0, sizeof(tower));
-    tower.sin_family = AF_INET;
-    struct addrinfo hints;
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET; // IPv4
-    hints.ai_socktype = SOCK_STREAM;
     
     // Port Range validation
     if (0 > start || end > 65535){
@@ -30,40 +23,58 @@ void scanRangeOpenPorts(int start, int end) {
         std::cout << "Thread started open port search with range: " << start << " : " << end << std::endl;
     }
 
+    // Prepare addrinfo hints
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET; // IPv4
+    hints.ai_socktype = SOCK_STREAM;
+
+    // Resolve the hostname to IP addresses
     struct addrinfo *result;
     int status = getaddrinfo(g_ipAddress, NULL, &hints, &result);
     if (status != 0) {
-        cerr << "Failed to resolve hostname: " << g_ipAddress << endl;
+        std::cerr << "Failed to resolve hostname: " << g_ipAddress << endl;
         return;
     }
 
-    // Loop through the resolved IP addresses
+    // Loop through the resolved multiple IP addresses 
     for (struct addrinfo *addr = result; addr != NULL; addr = addr->ai_next) {
+        tower.sin_family = AF_INET;
         tower.sin_addr = ((struct sockaddr_in*)(addr->ai_addr))->sin_addr;
+        
+        /*  // !DEBUG Print the resolved IP address
+        char ip[INET_ADDRSTRLEN];
+        struct sockaddr_in* ipv4 = (struct sockaddr_in*)addr->ai_addr;
+        inet_ntop(AF_INET, &(ipv4->sin_addr), ip, INET_ADDRSTRLEN);
+        std::cout << "Resolved IP address: " << ip << std::endl; */
+
         for (int portNum = start; portNum <= end; portNum++) {
             tower.sin_port = htons(portNum);
-            // Threading debug
-            //if (g_verbose){std::cout << " . ";};
             try {
+                // Lock the socket creation section
+                //std::lock_guard<std::mutex> socketLock(socketMutex);
+                // !performance lost 30%
+                // Creating socket
                 if ((sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
                     throw std::runtime_error("Failed to create socket.");
+                    continue;
                 }
+                // Connecting to the socket
                 if (connect(sockfd, (struct sockaddr*)&tower, sizeof(tower)) == 0) {
                     {
-                        // Threading debug
-                        //if (g_verbose){std::cout << " " << portNum << " ";};
-                        // Add open port to openPorts vector
+                        // TODO further resarch on thread-safe container like 
+                        // std::vector<std::atomic<int>> to avoid locking overhead 
+                        //when accessing the vector in a read-only context from multiple threads.
                         std::lock_guard<std::mutex> lock(vecMutex);
                         openPorts.push_back(portNum);
                     }
                 }
-                // Close the socket
-                close(sockfd); 
+                close(sockfd); // Close the socket for this IP address
             } catch (const std::exception &e) {
                 std::cerr << "Error: " << e.what() << std::endl;
-                continue;
             }
         }
+        //close(sockfd); // Close the socket for this IP address
     }
     // Free the addrinfo structure
     freeaddrinfo(result);
@@ -117,6 +128,7 @@ const char* ensureHttpsScheme(const char* url) {
     if (g_verbose){
     std::cout << "Combined IP Address: " << url << std::endl;
     }
+
     return url;
 }
 
@@ -126,7 +138,6 @@ void checkOpenPortsSSL (std::vector<int>& openPorts, char flag){
     // but std::set has its own find() member (ie. myset.find(x)) which runs in O(log n) time - 
     // that's much more efficient with large numbers of elements - consider using sets instead of vector
     if (openPorts.empty()) { 
-        std::cout << "check flags configuration: "<< (char)flag << std::endl;
         std::cout << "No open ports found, trying to get any host response..." << std::endl;
         getBanner(g_ipAddress);
     }
@@ -151,7 +162,7 @@ void checkOpenPortsSSL (std::vector<int>& openPorts, char flag){
 }
 
 // Printing open ports
-void printPorts(std::vector<int>& openPorts, char flag){
+void print_ports(std::vector<int>& openPorts, int start, int end, char flag){
 	// Different printing can be used depending on the provided flag
     switch(flag){
         case 's':
@@ -216,64 +227,10 @@ void thread_handler(int start, int end, char flag){
 	sort(openPorts.begin(), openPorts.end());
 
     // Printing open ports to console
-	printPorts(openPorts, flag);
+	print_ports(openPorts, start, end, flag);
 
     // Add additional verbose data
     if (g_verbose){
         verbosePrinter(flag);
     }
-}
-
-
-void scanSingleOpenPort(int portToScan, char flag) {
-    int sockfd;
-    struct sockaddr_in tower;
-    memset(&tower, 0, sizeof(tower));
-    tower.sin_family = AF_INET;
-    struct addrinfo hints;
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET; // IPv4
-    hints.ai_socktype = SOCK_STREAM;
-    
-    if (g_verbose){
-        std::cout << "Scanning open port: " << portToScan << " using flag: " << (char)flag << std::endl;
-    }
-    
-    struct addrinfo *result;
-    int status = getaddrinfo(g_ipAddress, NULL, &hints, &result);
-    if (status != 0) {
-        cerr << "Failed to resolve hostname: " << g_ipAddress << endl;
-        return;
-    }
-    
-    // Loop through the resolved IP addresses
-    for (struct addrinfo *addr = result; addr != NULL; addr = addr->ai_next) {
-        tower.sin_family = AF_INET;
-        tower.sin_addr = ((struct sockaddr_in*)(addr->ai_addr))->sin_addr;
-        tower.sin_port = htons(portToScan);
-        
-        try {
-            if ((sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
-                throw std::runtime_error("Failed to create socket.");
-            }
-            
-            if (connect(sockfd, (struct sockaddr*)&tower, sizeof(tower)) == 0) {
-                {
-                    openPorts.push_back(portToScan);
-                }
-            }
-            // Close the socket
-            close(sockfd);
-        } catch (const std::exception &e) {
-            std::cerr << "Error: " << e.what() << std::endl;
-            continue;
-        }
-    }
-    // Free the addrinfo structure
-    freeaddrinfo(result);
-}
-
-void runPrintPort (char flag){
-    // Printing open ports to console
-	printPorts(openPorts, flag);
 }

@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cstring>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -35,6 +36,12 @@ static vector<int> openPorts;
 
 // Protects shared data from being simultaneously accessed by multiple threads.
 static std::mutex vecMutex;
+//static std::mutex socketMutex;
+
+// Single port scannig function
+void scanSingleOpenPort(int portToScan, char flag);
+
+void runPrintPort(char flag);
 
 // Thread handler function from portscan.hpp
 void thread_handler(int start, int end, char flag);
