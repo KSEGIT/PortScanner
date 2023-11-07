@@ -44,6 +44,6 @@ void scanSingleOpenPort(int portToScan, char flag);
 void runPrintPort(char flag);
 
 // Thread handler function from portscan.hpp
-void thread_handler(int start, int end, char flag);
+void threadHandler(int start, int end, char flag);
 
 #endif

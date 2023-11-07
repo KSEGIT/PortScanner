@@ -91,22 +91,22 @@ int main(int argc, char* argv[]){
             case 's':
                 startPort = 0;
                 endPort = 1023;
-                thread_handler(startPort, endPort, (char) opt);
+                threadHandler(startPort, endPort, (char) opt);
                 break;
             case 'u':
                 startPort = 1024;
                 endPort = 49151;
-                thread_handler(startPort, endPort, (char) opt);
+                threadHandler(startPort, endPort, (char) opt);
                 break;
             case 'p':
                 startPort = 49152;
                 endPort = 65535;
-                thread_handler(startPort, endPort, (char) opt);
+                threadHandler(startPort, endPort, (char) opt);
                 break;
             case 'a':
                 startPort = 0;
                 endPort = 65535;
-                thread_handler(startPort, endPort, (char) opt);
+                threadHandler(startPort, endPort, (char) opt);
                 break;
             case 'h':
                 help();

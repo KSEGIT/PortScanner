@@ -174,7 +174,7 @@ void printPorts(std::vector<int>& openPorts, char flag){
 }
 
 // Multithreading handler
-void thread_handler(int start, int end, char flag){
+void threadHandler(int start, int end, char flag){
 
     if (g_verbose){
     // debug threads
