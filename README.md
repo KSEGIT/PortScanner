@@ -61,7 +61,7 @@ PortScanner is designed to work on both macOS and Linux operating systems, provi
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
